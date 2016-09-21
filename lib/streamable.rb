@@ -17,8 +17,10 @@ module Streamable
     end
 
     def upload_video(filename)
-      params = { file: Faraday::UploadIO.new(filename, "video/mp4") }
-      @streamable.post("/upload", params).body
+      params   = { file: Faraday::UploadIO.new(filename, "video/mp4") }
+      response = @streamable.post("/upload", params)
+
+      response.body
     end
 
     def video_link(shortcode)
