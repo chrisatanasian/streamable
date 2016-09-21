@@ -10,15 +10,17 @@ module Streamable
 
     def initialize(username, password)
       @streamable = Faraday.new(url: "https://api.streamable.com") do |builder|
-        builder.request(:url_encoded)
+        builder.request(:multipart)
         builder.adapter(:net_http)
         builder.basic_auth(username, password)
       end
     end
 
     def upload_video(filename)
-      params = { file: Faraday::UploadIO.new(filename, "video/mp4") }
-      @streamable.post("/upload", params).body
+      params   = { file: Faraday::UploadIO.new(filename, "video/mp4") }
+      response = @streamable.post("/upload", params)
+
+      response.body
     end
 
     def video_link(shortcode)

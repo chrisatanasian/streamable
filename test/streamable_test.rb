@@ -11,8 +11,8 @@ class StreamableTest < Minitest::Test
       @url_prefix       = @streamable.streamable.url_prefix.to_s
     end
 
-    should "set builder request to be url_encoded" do
-      assert_equal Faraday::Request::UrlEncoded.inspect, @builder_handlers[0].inspect
+    should "set builder request to be multipart" do
+      assert_equal Faraday::Request::Multipart.inspect, @builder_handlers[0].inspect
     end
 
     should "set builder adapter to be net_http" do
