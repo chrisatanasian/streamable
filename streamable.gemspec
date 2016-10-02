@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'streamable/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "streamable"
+  spec.name          = "streamable-api"
   spec.version       = Streamable::VERSION
   spec.authors       = ["Chris Atanasian"]
   spec.email         = ["catanasian@gmail.com"]
