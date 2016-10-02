@@ -2,6 +2,7 @@ require "streamable/version"
 
 module Streamable
   require "faraday"
+  require "json"
 
   class Streamable
     attr_accessor :streamable
@@ -20,7 +21,11 @@ module Streamable
       params   = { file: Faraday::UploadIO.new(filename, "video/mp4") }
       response = @streamable.post("/upload", params)
 
-      response.body
+      response_json = JSON.parse(response.body)
+      shortcode     = response_json["shortcode"]
+
+      response_json.merge("video_link"       => video_link(shortcode),
+                          "video_embed_link" => video_embed_link(shortcode))
     end
 
     def video_link(shortcode)
