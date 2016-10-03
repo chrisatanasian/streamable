@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["catanasian@gmail.com"]
 
   spec.summary       = %q{Unofficial Ruby API wrapper for Streamable}
-  spec.homepage      = "http://github.com/chrisatanasian"
+  spec.homepage      = "http://github.com/chrisatanasian/streamable-api"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
