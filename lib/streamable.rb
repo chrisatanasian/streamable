@@ -9,11 +9,14 @@ module Streamable
 
     STREAMABLE_URL = "http://streamable.com"
 
-    def initialize(username, password)
+    def initialize(username: username, password: password)
       @streamable = Faraday.new(url: "https://api.streamable.com") do |builder|
         builder.request(:multipart)
         builder.adapter(:net_http)
-        builder.basic_auth(username, password)
+
+        if username && password
+          builder.basic_auth(username, password)
+        end
       end
     end
 

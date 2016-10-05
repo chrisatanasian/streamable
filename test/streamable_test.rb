@@ -5,28 +5,41 @@ require "streamable"
 
 class StreamableTest < Minitest::Test
   context "#initialize" do
-    setup do
-      @streamable = Streamable::Streamable.new("username", "password")
-      @builder_handlers = @streamable.streamable.builder.handlers
-      @url_prefix       = @streamable.streamable.url_prefix.to_s
-    end
+    [[Streamable::Streamable.new.streamable, "without"],
+     [Streamable::Streamable.new(username: "username", password: "password").streamable, "with"]].each do |streamable, with_or_without|
+      context "streamable #{with_or_without} an account" do
+        should "set builder request to be multipart" do
+          assert_equal Faraday::Request::Multipart.inspect, streamable.builder.handlers[0].inspect
+        end
 
-    should "set builder request to be multipart" do
-      assert_equal Faraday::Request::Multipart.inspect, @builder_handlers[0].inspect
-    end
+        should "set builder adapter to be net_http" do
+          assert_equal Faraday::Adapter::NetHttp.inspect, streamable.builder.handlers[1].inspect
+        end
 
-    should "set builder adapter to be net_http" do
-      assert_equal Faraday::Adapter::NetHttp.inspect, @builder_handlers[1].inspect
-    end
+        should "set the url prefix to be Streamable's API URL" do
+          assert_equal "https://api.streamable.com/", streamable.url_prefix.to_s
+        end
 
-    should "set the url prefix to be Streamable's API URL" do
-      assert_equal "https://api.streamable.com/", @url_prefix
+        should "set the user agent header to be Faraday" do
+          assert_match "Faraday", streamable.headers["User-Agent"]
+        end
+
+        if with_or_without == "without"
+          should "not have an Authorization header" do
+            assert_nil streamable.headers["Authorization"]
+          end
+        elsif with_or_without == "with"
+          should "set the Authorization header" do
+            assert_equal 30, streamable.headers["Authorization"].length
+          end
+        end
+      end
     end
   end
 
   context "#upload_video" do
     should "make a POST request to the Streamable upload endpoint and return its body" do
-      @streamable = Streamable::Streamable.new("username", "password")
+      @streamable = Streamable::Streamable.new
 
       video_filename = "test_video.mp4"
       File.open(video_filename, "w").close
@@ -50,7 +63,7 @@ class StreamableTest < Minitest::Test
 
   context "links" do
     setup do
-      @streamable = Streamable::Streamable.new("username", "password")
+      @streamable = Streamable::Streamable.new
     end
 
     context "#video_link" do
